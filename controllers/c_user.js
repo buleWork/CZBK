@@ -63,5 +63,65 @@ exports.handleSignout = (req, res) => {
 
 };
 
+
+//渲染注册
+exports.showSignup = (req,res) => {
+    res.render('signup.html');
+}
+// 处理注册的表单
+exports.handleSignup = (req,res) => {
+
+    const body = req.body;
+    m_user.checkEmail(body.email,(err,data) => {
+        if(err){
+            return res.send({
+                code:500,
+                message:err.message
+            })
+        }
+        //如果邮箱存在 data[0]
+        if(data[0]){
+            return res.send({
+                code:1,
+                message:'邮箱存在，换换'
+            })
+        }
+        //如果邮箱不存在 在验证昵称  body.nickname
+
+        m_user.checkNickname(body.nickname,(err,data) => {
+            if(err){
+                return res.send({
+                    code:500,
+                    message:err.message
+                })
+            }
+            //如果昵称存在 data[0]
+            if(data[0]){
+                return res.send({
+                    code:2,
+                    message:'昵称存在了，再想一个'
+                })
+            }
+
+            // 如果邮箱/昵称都不存在 添加新数据
+
+            m_user.addUser(body,(err,data) => {
+                if(err){
+                    return res.send({
+                        code:500,
+                        message:err.message
+                    })
+                }
+
+                res.send({
+                    code:200,
+                    message:'注册成功'
+                })
+            })
+
+        })
+    })
+}
+
 exports.showSignin = showSignin;
 exports.handleSignin = handleSignin;

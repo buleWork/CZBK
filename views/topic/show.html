@@ -22,8 +22,11 @@
                 {{else}}
                 <article class="markdown-body">
                     <h1>{{topic.title}}</h1>
-                    <a href="/topic/detail/edit">编辑</a>
-                    <a href="/topic/detail/delete" id="delete_topic">删除</a>
+
+                    {{if topic.userId ===  sessionUserId}}
+                    <a href="/topic/{{topic.id}}/edit">编辑</a>
+                    <a href="/topic/{{topic.id}}/delete" id="delete_topic">删除</a>
+                    {{/if}}
                     <hr> {{topic.content}}
                 </article>
                 <div class="panel panel-default">
@@ -59,6 +62,20 @@
     <script src="/node_modules/bootstrap/dist/js/bootstrap.js"></script>
     <script>
         // 点击删除
+        $('#delete_topic').on('click',function(e){
+            e.preventDefault(); //取消默认跳转
+            var url = '/topic/' + '{{topic.id}}' + '/delete';
+            if(!window.confirm('确定删除么?')){
+                return;
+            }
+
+            $.get(url,function(data){
+                if(data.code === 200){
+                    window.location.href = '/';
+                }
+            })
+
+        })
     </script>
 </body>
 

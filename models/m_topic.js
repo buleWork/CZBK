@@ -3,8 +3,7 @@
 
 
  exports.findAllTopic = (callback) => {
-     const sqlstr = 'SELECT *FROM `topics`'
-    //   ORDER BY `createdAt` DESC'
+     const sqlstr = 'SELECT *FROM `topics` ORDER BY `createdAt` DESC'
      db.query(sqlstr, (err, data) => {
 
         // 要在c_topic中使用findAllTopic里面query()这个异步操作返回的结果
@@ -40,5 +39,25 @@ exports.findTopicByID = (topicID, callback) =>{
             return callback(err)
         }
         callback(null,data)
+    })
+ }
+
+ exports.updateTopicByID = (topicID,body,callback) => {
+    const sqlstr = 'UPDATE `topics` SET `title`=?,`content`=? WHERE `id`=?';
+    db.query(sqlstr,[body.title,body.content,topicID],(err,data)=>{
+        if(err){
+            return callback(err)
+        }
+        callback(null,data);
+    })
+ }
+
+ exports.deleteTopicByID =(topicID,callback) => {
+    const sqlstr = 'DELETE FROM `topics` WHERE `id`=?';
+    db.query(sqlstr, topicID, (err, data) => {
+        if (err) {
+            return callback(err);
+        }
+        callback(null, data);
     })
  }

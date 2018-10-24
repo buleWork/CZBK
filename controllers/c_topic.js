@@ -70,9 +70,64 @@ exports.showTopic = (req, res) => {
         }
         // console.log(data);
         res.render('topic/show.html', {
-            topic: data[0]
+            topic: data[0],
+            sessionUserId: req.session.user.id
+            // req.session.user.id
         });
-
 
     });
  }
+
+// 渲染话题编辑页面
+exports.showEdit = (req,res) => {
+    const topicID = req.params.topicID;
+
+    m_topic.findTopicByID(topicID,(err,data) => {
+        if(err){
+            return res.send({
+                code:500,
+                massage:'服务器错啦，好开心'
+            })
+        }
+        res.render('topic/edit.html',{topic:data[0]})
+    })
+}
+
+// 处理编辑页面的表单请求
+
+exports.handleEditTopic = (req,res) => {
+    const body = req.body;
+    const topicID = req.params.topicID;
+
+    m_topic.updateTopicByID(topicID, body, (err, data) => {
+        if (err) {
+            return res.send({
+                code: 500,
+                err: '服务器错误'
+            })
+        }
+        res.send({
+            code: 200,
+            message: '编辑成功'
+        })
+    })
+}
+
+// 删除话题
+exports.deleteTopic = (req,res) => {
+    const topicID = req.params.topicID;
+
+    m_topic.deleteTopicByID(topicID,(err,data)=>{
+        if (err) {
+            return res.send({
+                code: 500,
+                message: err.message
+            })
+        }
+        res.send({
+            code: 200,
+            message: '删除成功'
+        })
+
+    })
+}
